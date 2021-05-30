@@ -1,3 +1,4 @@
+import multiprocessing
 import os
 from pathlib import Path
 
@@ -12,17 +13,37 @@ app.config['MAX_CONTENT_LENGTH'] = 16 * 1024 * 1024
 NO_FILE = "NOFILE"
 app.config['CORPUS_FILE_NAME'] = NO_FILE
 
+process = []
+parent_connection = []
+queue = multiprocessing.Queue()
+sess = []
+
 
 @app.route('/')
-def index(file_name=NO_FILE, results=None):
+def index(file_name=NO_FILE, results=None, message="all okay"):
     if file_name != NO_FILE:
         app.config['CORPUS_FILE_NAME'] = file_name
-    return render_template("index.html", file_name=app.config['CORPUS_FILE_NAME'], results=results)
+    return render_template("index.html", file_name=app.config['CORPUS_FILE_NAME'], results=results, message=message)
 
 
 @app.route('/upload')
 def upload_file_start():
     return render_template('upload.html')
+
+
+@app.route('/')
+def check_process():
+    for p in parent_connection:
+        if p.poll(2):
+            print("finished")
+            for pr in process:
+                pr.join()
+                sess.append(queue.get()['sess'])
+            return index(message="FINISHED")
+        else:
+            print("not finished")
+            return index(message="NOT FINISHED")
+    return index(message="ERROR NO CONNECTION FOUND")
 
 
 @app.route('/uploader', methods=['GET', 'POST'])
@@ -47,13 +68,18 @@ def start_process():
     with open(file_name, 'r', encoding='utf-8') as f:
         out = f.read()
     print(out)
+    parent_conn, child_conn = multiprocessing.Pipe()
+    parent_connection.append(parent_conn)
     gpt2 = GPT2()
     model_name = os.environ['GPT2_MODEL_NAME']
-    sess = gpt2.finetune(file_name=file_name, model_name=model_name)
-    gen = []
-    for i in range(20):
-        gen.append(gpt2.generate_text(sess))
-    print(gen)
+    # sess = gpt2.finetune(file_name=file_name, model_name=model_name)
+    p = gpt2.start_threaded(file_name=file_name, model_name=model_name, conn=child_conn, queue=queue)
+    p.start()
+    process.append(p)
+    # gen = []
+    # for i in range(20):
+    #     gen.append(gpt2.generate_text(sess))
+    # print(gen)
     return ""
 
 

@@ -12,11 +12,27 @@
           });
         });
 
+
+</script>
+<script type=text/javascript>
+        $(function() {
+          $('a#check_process').on('click', function(e) {
+            e.preventDefault()
+            $.getJSON('/check_process',
+                function(data) {
+              //do nothing
+            });
+            return false;
+          });
+        });
+
+
 </script>
 
 <body>
 <h1>GPT-2 Web Frontend</h1>
 The file loaded is {{ file_name }}<br/>
+Current status is: {{ message }}<br/><br/>
 
 <a href="{{ url_for('upload_file_start') }}">Upload File</a>
 <form>
@@ -24,7 +40,14 @@ The file loaded is {{ file_name }}<br/>
         <button class='btn btn-default'>Start Process</button>
     </a>
 </form>
+<form>
+    <a href=# id=check_process>
+        <button class='btn btn-default'>Check Process</button>
+    </a>
+</form>
+<a href="{{ url_for('index') }}">Reload</a>
 <h2>Results:</h2>
 <p>{{ results }}</p>
+
 </body>
 </html>
