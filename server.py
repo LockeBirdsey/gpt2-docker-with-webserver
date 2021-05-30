@@ -3,6 +3,7 @@ from pathlib import Path
 
 from flask import Flask, render_template, request
 from werkzeug.utils import secure_filename
+
 from gpt2_process import GPT2
 
 app = Flask(__name__)
@@ -41,9 +42,13 @@ def start_process():
     f_name = app.config['CORPUS_FILE_NAME']
     if f_name == NO_FILE:
         return index()
+    file_name = f_name  # since the Flask UPLOAD_FOLDER doesn't do anything
+    out = []
+    with open(file_name, 'r', encoding='utf-8') as f:
+        out = f.read()
+    print(out)
     gpt2 = GPT2()
     model_name = os.environ['GPT2_MODEL_NAME']
-    file_name = str(Path(app.config['UPLOAD_FOLDER']).joinpath(f_name))
     sess = gpt2.finetune(file_name=file_name, model_name=model_name)
     gen = []
     for i in range(20):
