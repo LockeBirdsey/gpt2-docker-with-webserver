@@ -6,16 +6,16 @@ ARG UPLOAD_FOLDER=upload
 ENV UPLOAD_FOLDER=$UPLOAD_FOLDER
 
 RUN apt-get update
-ADD "https://api.github.com/repos/LockeBirdsey/thenewsoftheday/commits?per_page=1" latest_commit
-RUN curl -sLO "https://github.com/LockeBirdsey/thenewsoftheday/archive/refs/heads/master.zip" && unzip master.zip
+ADD "https://api.github.com/repos/LockeBirdsey/gpt2-docker-with-webserver/commits?per_page=1" latest_commit
+RUN curl -sLO "https://github.com/LockeBirdsey/gpt2-docker-with-webserver/archive/refs/heads/master.zip" && unzip master.zip
 
-WORKDIR thenewsoftheday-master
+WORKDIR gpt2-docker-with-webserver-master
 RUN chmod +x entrypoint.sh
 RUN pip3 install -r requirements.txt
 RUN pip3 install -r gpt2requirements.txt
 RUN pip3 install gunicorn
 
 #Get the things running
-ENTRYPOINT ["/thenewsoftheday-master/entrypoint.sh"]
+ENTRYPOINT ["/gpt2-docker-with-webserver-master/entrypoint.sh"]
 CMD ["run"]
 #CMD ["gunicorn"  , "--bind", "0.0.0.0:8000", "server:app"]
