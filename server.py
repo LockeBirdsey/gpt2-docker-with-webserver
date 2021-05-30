@@ -25,7 +25,7 @@ def upload_file():
         # This is where we call gpt2
         gpt2 = GPT2()
         model_name = os.environ['GPT2_MODEL_NAME']
-        file_name = Path(app.config['UPLOAD_FOLDER']).joinpath(f_name)
+        file_name = str(Path(app.config['UPLOAD_FOLDER']).joinpath(f_name))
         sess = gpt2.finetune(file_name=file_name, model_name=model_name)
         gen = []
         for i in range(20):
