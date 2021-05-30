@@ -1,12 +1,14 @@
 from flask import Flask, render_template, request
 from werkzeug.utils import secure_filename
 
+from gpt2_process import GPT2
+
 app = Flask(__name__)
 app.config['UPLOAD_FOLDER'] = "./upload"
 app.config['MAX_CONTENT_LENGTH'] = 16 * 1024 * 1024
 
 
-@app.route('/upload')
+@app.route('/')
 def upload_file_start():
     return render_template('upload.html')
 
@@ -18,9 +20,12 @@ def upload_file():
         f_name = secure_filename(f.filename)
         f.save(f_name)
         # TODO This is where we call gpt2
+        gpt2 = GPT2()
+        
+        # gpt2.finetune()
         # process(f.filename, )
         print(f)
-        return 'file uploaded successfully'
+        return 'file uploaded successfully and stored at {}'.format(f.filename)
 
 
 if __name__ == '__main__':
