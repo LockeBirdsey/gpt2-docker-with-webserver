@@ -11,8 +11,6 @@
             return false;
           });
         });
-
-
 </script>
 <script type=text/javascript>
         $(function() {
@@ -25,8 +23,16 @@
             return false;
           });
         });
-
-
+</script>
+<script type=text/javascript>
+  function generate() {
+    $.getJSON({{ request.script_root|tojson|safe }} + '/generate',
+      { key: $('#key').val() },
+      function(data) {
+        var ul = $('#result');
+        ul.empty();
+        $(data.session).each(function(index, item) {
+          ul.append($('<li>',{text:item}));});});}
 </script>
 
 <body>
@@ -46,8 +52,8 @@ Current status is: {{ message }}<br/><br/>
     </a>
 </form>
 <a href="{{ url_for('index') }}">Reload</a>
-<h2>Results:</h2>
-<p>{{ results }}</p>
+<input id="submit" type="button" value="Generate" onclick="generate();" />
+<hr /><ul id="result"></ul>
 
 </body>
 </html>
