@@ -12,7 +12,6 @@ RUN curl -sLO "https://github.com/LockeBirdsey/gpt2-docker-with-webserver/archiv
 WORKDIR gpt2-docker-with-webserver-master
 RUN chmod +x entrypoint.sh
 RUN pip3 install -r requirements.txt
-RUN pip3 install -r gpt2requirements.txt
 RUN pip3 install gunicorn
 
 #Get the things running
