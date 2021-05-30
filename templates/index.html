@@ -1,0 +1,30 @@
+<html>
+<script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+<script type=text/javascript>
+        $(function() {
+          $('a#run_process').on('click', function(e) {
+            e.preventDefault()
+            $.getJSON('/run_process',
+                function(data) {
+              //do nothing
+            });
+            return false;
+          });
+        });
+
+</script>
+
+<body>
+<h1>GPT-2 Web Frontend</h1>
+The file loaded is {{ file_name }}<br/>
+
+<a href="{{ url_for('upload_file_start') }}">Upload File</a>
+<form>
+    <a href=# id=run_process>
+        <button class='btn btn-default'>Start Process</button>
+    </a>
+</form>
+<h2>Results:</h2>
+<p>{{ results }}</p>
+</body>
+</html>
